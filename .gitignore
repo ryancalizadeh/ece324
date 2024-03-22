@@ -1,3 +1,7 @@
+sample_gen_64_64/
+training_checkpoints/
+dcgan.gif
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
