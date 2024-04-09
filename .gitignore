@@ -1,5 +1,6 @@
 sample_gen_64_64/
 training_checkpoints/
+generated_images/
 dcgan.gif
 
 # Byte-compiled / optimized / DLL files
