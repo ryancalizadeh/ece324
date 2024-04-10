@@ -9,7 +9,7 @@ class DataLoader:
     y: np.ndarray
     config: ExperimentConfig
 
-    def __init__(self, config: ExperimentConfig):
+    def __init__(self, config: ExperimentConfig=None):
         self.config = config
 
         train_dataset = PneumoniaMNIST(split='train', download=True, transform=lambda im : np.array(im.getdata()).reshape(im.size[0], im.size[1]))

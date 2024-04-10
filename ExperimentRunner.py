@@ -8,14 +8,16 @@ from Results import Results
 
 class ExperimentRunner:
     config: ExperimentConfig
+    name: str
+    dl: DataLoader
 
-    def __init__(self, config: ExperimentConfig):
+    def __init__(self, config: ExperimentConfig, dl: DataLoader):
         self.config = config
         self.name = config.name
+        self.dl = dl
 
     def run(self) -> Results:
-        dl = DataLoader(self.config)
-        train_x, train_y, test_x, test_y = dl.load_data()
+        train_x, train_y, test_x, test_y = self.dl.load_data()
 
         generator = Generator(self.config)
         generator.train(train_x, train_y)
