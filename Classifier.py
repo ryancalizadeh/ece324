@@ -11,7 +11,7 @@ class Classifier:
     def __init__(self, config):
         self.config = config
 
-    def normalizer(self,x):
+    def normalize(self, x):
         x = 2 * x / np.max(x) - 1
         return x
     
@@ -30,8 +30,7 @@ class Classifier:
     def train(self, x: np.ndarray, y: np.ndarray, generated_x: np.ndarray, generated_y: np.ndarray):
         """Train the classifier based on the training data and the generated data."""
 
-        x = self.normalizer(x)
-        generated_x = self.normalizer(generated_x)
+        generated_x = self.normalize(generated_x)
 
         # combine real and generated
         combined_x = np.concatenate((x, generated_x), axis=0)
@@ -50,12 +49,9 @@ class Classifier:
     def evaluate(self, x: np.ndarray, y: np.ndarray) -> Results:
         """Evaluate the classifier on the test data."""
 
-        # normalize test data
-        x = self.normalizer(x)
-
-        # evaluat
+        # evaluate
         loss, accuracy = self.model.evaluate(x, y)
-        
+
         results = Results(accuracy=accuracy)
 
         return results
