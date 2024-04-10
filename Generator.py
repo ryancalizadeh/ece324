@@ -101,10 +101,12 @@ class Generator:
 
         return model
                 
-    def generate(self) -> tuple[np.ndarray, np.ndarray]:
+    def generate(self, num_images) -> np.ndarray:
         """Generate synthetic data according to config.num_synthetic_shots, config.synth_ratio, and config.num_real_shots."""
         generator = self.generator
         num_gen_imgs = self.config["num_synthetic_shots"]
         s_ratio = self.config["synth_ratio"]
         class_imbalance = self.config["ci_ratio"]
-        return None, None
+        seed = tf.random.normal([num_images, 100])
+        generated_images = generator(seed, training=False)
+        return generated_images
