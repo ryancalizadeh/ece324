@@ -50,7 +50,7 @@ class DataLoader:
         x_pos = rng.choice(self.x_pos, num_pos, replace=False)
         x_neg = rng.choice(self.x_neg, num_neg, replace=False)
 
-        x_gen_train = np.concatenate(x_pos.T, x_neg.T)
+        x_gen_train = np.vstack((x_pos, x_neg))
         x_train = np.concatenate((x_pos, x_neg))
         y_train = np.concatenate((np.ones(num_pos), np.zeros(num_neg)))
 
