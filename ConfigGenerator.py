@@ -38,12 +38,12 @@ class ConfigGenerator:
 
     @staticmethod
     def ci_ratio_range():
-        return [x/10 for x in range(1, 10, 2)]
+        return [x/10 for x in range(0, 11, 2)]
 
     @staticmethod
     def num_real_shots_range():
-        return [2**i for i in range(1, 10, 2)]
+        return [2**i for i in range(2, 11, 2)]
 
     @staticmethod
     def sr_ratio_range():
-        return [x/10 for x in range(1, 10, 2)]
+        return [x/10 for x in range(0, 11, 2)]

@@ -5,6 +5,7 @@ from DataLoader import DataLoader
 from Generator import Generator
 from Classifier import Classifier
 from Results import Results
+import numpy as np
 
 class ExperimentRunner:
     config: ExperimentConfig
