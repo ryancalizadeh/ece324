@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers
 from ExperimentConfig import ExperimentConfig
+import os 
 
 class Generator:
     config: ExperimentConfig
@@ -47,16 +48,18 @@ class Generator:
         return model
 
     def generator_loss(fake_out, loss):
-        return loss(tf.ones_like(fake_output), fake_output)
+        return loss(tf.ones_like(fake_out), fake_out)
         
     def discriminator_loss(real_out, fake_out, loss):
-        real_loss = loss(tf.ones_like(real_output), real_output)
-        fake_loss = loss(tf.zeros_like(fake_output), fake_output)
+        real_loss = loss(tf.ones_like(real_out), real_out)
+        fake_loss = loss(tf.zeros_like(fake_out), fake_out)
         total_loss = real_loss + fake_loss
         return total_loss
         
     def train(self, x: np.ndarray, y: np.ndarray):
         """Train the generator based on the training data."""
+        generator = self.dcgan_generator
+        discriminator = self.dcgan_discriminator
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True) # maybe specify in config
         generator_optimizer = tf.keras.optimizers.Adam(1e-4)
         discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
@@ -70,16 +73,18 @@ class Generator:
         
         EPOCHS = 50
         noise_dim = 100
+        BATCH_SIZE = 256
+        dataset = tf.data.Dataset.from_tensor_slices(x).batch(BATCH_SIZE)
 
-        for epoch in range(epochs):
+        for epoch in range(EPOCHS):
             for image_batch in dataset:
                 noise = tf.random.normal([BATCH_SIZE, noise_dim])
 
                 with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-                    generated_images = dcgan_generator(noise, training=True)
+                    generated_images = generator(noise, training=True)
                     
-                    real_output = dcgan_discriminator(images, training=True)
-                    fake_output = dcgan_discriminator(generated_images, training=True)
+                    real_output = discriminator(image_batch, training=True)
+                    fake_output = discriminator(generated_images, training=True)
                     
                     gen_loss = generator_loss(fake_output, loss)
                     disc_loss = discriminator_loss(real_output, fake_output, loss)
@@ -93,8 +98,6 @@ class Generator:
             # Save the model every 15 epochs
             if (epoch + 1) % 15 == 0:
               checkpoint.save(file_prefix = checkpoint_prefix)
-
-        return model
                 
     def generate(self, num_images) -> np.ndarray:
         """Generate synthetic data according to config.num_synthetic_shots, config.synth_ratio, and config.num_real_shots."""
@@ -103,5 +106,5 @@ class Generator:
         s_ratio = self.config["synth_ratio"]
         class_imbalance = self.config["ci_ratio"]
         seed = tf.random.normal([num_images, 100])
-        generated_images = dcgan_generator(seed, training=False)
+        generated_images = generator(seed, training=False)
         return generated_images
