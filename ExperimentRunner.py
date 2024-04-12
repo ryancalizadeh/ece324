@@ -18,26 +18,24 @@ class ExperimentRunner:
         self.dl = dl
 
     def run(self) -> Results:
-        train_gen, train_x, train_y, test_x, test_y = self.dl.load_data()
+        x_train, y_train, x_test, y_test = self.dl.load_data()
 
-        num_imgs = self.config.num_real_shots
-        s_ratio = self.config.sr_ratio
-        class_imbalance = self.config.ci_ratio
-        num_synth_imgs = int(num_imgs * s_ratio)
-        
-        generator_0 = Generator(self.config)
-        generator_0.train(train_gen[1], train_y)
-        num_neg_imgs = int(num_synth_imgs * (1-class_imbalance))
-        generated_neg = generator_0.generate(num_neg_imgs)
+        num_generated = int(self.config.num_real_shots * self.config.sr_ratio)
 
-        generator_1 = Generator(self.config)
-        generator_1.train(train_gen[0], train_y)
-        num_pos_imgs = num_synth_imgs - num_neg_imgs
-        generated_pos = generator_1.generate()
+        num_neg_imgs = int(num_generated / 2)
+        num_pos_imgs = num_generated - num_neg_imgs
+
+        generator_neg = Generator(self.config)
+        generator_neg.train(x_train[y_train == 0])
+        generated_neg = generator_neg.generate(num_neg_imgs)
+
+        generator_pos = Generator(self.config)
+        generator_pos.train(x_train[y_train == 1])
+        generated_pos = generator_pos.generate(num_pos_imgs)
 
         generated_x = np.concatenate(generated_neg, generated_pos)
-        generated_y = np.concatenate(np.zeros(num_neg_imgs), np.ones(num_pos_imgs))
-        
+        generated_y = np.concatenate((np.zeros(num_neg_imgs), np.ones(num_pos_imgs)))
+
         classifier = Classifier(self.config)
-        classifier.train(train_x, train_y, generated_x, generated_y)
-        return classifier.evaluate(test_x, test_y)
+        classifier.train(x_train, y_train, generated_x, generated_y)
+        return classifier.evaluate(x_test, y_test)

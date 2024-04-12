@@ -3,6 +3,8 @@ training_checkpoints/
 generated_images/
 dcgan.gif
 
+configs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -39,7 +39,10 @@ class DataLoader:
         self.x_neg = self.x[self.y == 0]
 
     def load_data(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """Load data from MedMnist according to config.num_real_shots and config.ci_ratio."""
+        """
+        Load data from MedMnist according to config.num_real_shots and config.ci_ratio.
+        returns: x_train, y_train, x_test, y_test
+        """
 
         assert self.config is not None
 
@@ -50,7 +53,6 @@ class DataLoader:
         x_pos = rng.choice(self.x_pos, num_pos, replace=False)
         x_neg = rng.choice(self.x_neg, num_neg, replace=False)
 
-        x_gen_train = np.vstack((x_pos, x_neg))
         x_train = np.concatenate((x_pos, x_neg))
         y_train = np.concatenate((np.ones(num_pos), np.zeros(num_neg)))
 
@@ -62,8 +64,8 @@ class DataLoader:
         # Optimization so we aren't testing on a massive dataset
         _, x_test, _, y_test = train_test_split(self.x, self.y, test_size=1000)
 
-        return x_gen_train, x_train, x_test, y_train, y_test
-    
+        return x_train, y_train, x_test, y_test
+
     def set_config(self, config):
         self.config = config
 
