@@ -60,16 +60,16 @@ class Generator:
         """Train the generator based on the training data."""
         generator = self.dcgan_generator
         discriminator = self.dcgan_discriminator
-        loss = tf.keras.losses.BinaryCrossentropy(from_logits=True) # maybe specify in config
+        loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         generator_optimizer = tf.keras.optimizers.Adam(1e-4)
         discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
 
-        checkpoint_dir = './gan_training_checkpoints' # maybe move to config
-        checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
-        checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
-                                     discriminator_optimizer=discriminator_optimizer,
-                                     generator=Generator.dcgan_generator,
-                                     discriminator=Generator.dcgan_discriminator)
+        # checkpoint_dir = './gan_training_checkpoints' # maybe move to config
+        # checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
+        # checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
+        #                              discriminator_optimizer=discriminator_optimizer,
+        #                              generator=Generator.dcgan_generator,
+        #                              discriminator=Generator.dcgan_discriminator)
         
         EPOCHS = 50
         noise_dim = 100
@@ -96,8 +96,8 @@ class Generator:
                 discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, discriminator.trainable_variables))
                     
             # Save the model every 15 epochs
-            if (epoch + 1) % 15 == 0:
-              checkpoint.save(file_prefix = checkpoint_prefix)
+            # if (epoch + 1) % 15 == 0:
+            #   checkpoint.save(file_prefix = checkpoint_prefix)
                 
     def generate(self, num_images) -> np.ndarray:
         """Generate synthetic data according to config.num_synthetic_shots, config.synth_ratio, and config.num_real_shots."""
