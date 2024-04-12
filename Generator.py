@@ -68,8 +68,8 @@ class Generator:
         checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
         checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                      discriminator_optimizer=discriminator_optimizer,
-                                     generator=generator,
-                                     discriminator=discriminator)
+                                     generator=Generator.dcgan_generator,
+                                     discriminator=Generator.dcgan_discriminator)
         
         EPOCHS = 50
         noise_dim = 100
