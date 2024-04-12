@@ -7,9 +7,12 @@ from sklearn.model_selection import train_test_split
 class DataLoader:
     x: np.ndarray
     y: np.ndarray
-    config: ExperimentConfig
+    x_pos: np.ndarray
+    x_neg: np.ndarray
 
-    def __init__(self, config: ExperimentConfig=None):
+    config: ExperimentConfig | None
+
+    def __init__(self, config: ExperimentConfig | None=None):
         self.config = config
 
         train_dataset = PneumoniaMNIST(split='train', download=True, transform=lambda im : np.array(im.getdata()).reshape(im.size[0], im.size[1]))
@@ -32,13 +35,31 @@ class DataLoader:
         self.x = np.concatenate((x_train, x_test, x_val))
         self.y = np.concatenate((y_train, y_test, y_val))
 
-    def load_data(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """Load data from MedMnist according to config.num_real_shots"""
+        self.x_pos = self.x[self.y == 1]
+        self.x_neg = self.x[self.y == 0]
 
-        x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, train_size=self.config.num_real_shots)
+    def load_data(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """Load data from MedMnist according to config.num_real_shots and config.ci_ratio."""
+
+        assert self.config is not None
+
+        num_pos = int(self.config.num_real_shots * self.config.ci_ratio)
+        num_neg = self.config.num_real_shots - num_pos
+
+        rng = np.random.default_rng()
+        x_pos = rng.choice(self.x_pos, num_pos, replace=False)
+        x_neg = rng.choice(self.x_neg, num_neg, replace=False)
+
+        x_train = np.concatenate((x_pos, x_neg))
+        y_train = np.concatenate((np.ones(num_pos), np.zeros(num_neg)))
+
+        # Shuffle the data
+        p = np.random.permutation(len(x_train))
+        x_train = x_train[p]
+        y_train = y_train[p]
 
         # Optimization so we aren't testing on a massive dataset
-        _, x_test, _, y_test = train_test_split(x_test, y_test, test_size=1000)
+        _, x_test, _, y_test = train_test_split(self.x, self.y, test_size=1000)
 
         return x_train, x_test, y_train, y_test
     
