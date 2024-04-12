@@ -81,10 +81,10 @@ class Generator:
                 noise = tf.random.normal([BATCH_SIZE, noise_dim])
 
                 with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-                    generated_images = generator(noise, training=True)
+                    generated_images = generator(noise)
                     
-                    real_output = discriminator(image_batch, training=True)
-                    fake_output = discriminator(generated_images, training=True)
+                    real_output = discriminator(image_batch)
+                    fake_output = discriminator(generated_images)
                     
                     gen_loss = generator_loss(fake_output, loss)
                     disc_loss = discriminator_loss(real_output, fake_output, loss)
@@ -106,5 +106,5 @@ class Generator:
         s_ratio = self.config["synth_ratio"]
         class_imbalance = self.config["ci_ratio"]
         seed = tf.random.normal([num_images, 100])
-        generated_images = generator(seed, training=False)
+        generated_images = generator(seed)
         return generated_images
