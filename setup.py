@@ -1,1 +1,1 @@
-!pip install medmnist
+pip install medmnist
