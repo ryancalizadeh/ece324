@@ -58,8 +58,8 @@ class Generator:
         
     def train(self, x: np.ndarray, y: np.ndarray):
         """Train the generator based on the training data."""
-        generator = self.dcgan_generator
-        discriminator = self.dcgan_discriminator
+        generator = self.dcgan_generator()
+        discriminator = self.dcgan_discriminator()
         loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         generator_optimizer = tf.keras.optimizers.Adam(1e-4)
         discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
@@ -68,8 +68,8 @@ class Generator:
         # checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
         # checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
         #                              discriminator_optimizer=discriminator_optimizer,
-        #                              generator=Generator.dcgan_generator,
-        #                              discriminator=Generator.dcgan_discriminator)
+        #                              generator=generator,
+        #                              discriminator=discriminator)
         
         EPOCHS = 50
         noise_dim = 100
@@ -81,10 +81,10 @@ class Generator:
                 noise = tf.random.normal([BATCH_SIZE, noise_dim])
 
                 with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-                    generated_images = generator(noise)
+                    generated_images = generator(noise, training=True)
                     
-                    real_output = discriminator(image_batch)
-                    fake_output = discriminator(generated_images)
+                    real_output = discriminator(image_batch, training=True)
+                    fake_output = discriminator(generated_images, training=True)
                     
                     gen_loss = generator_loss(fake_output, loss)
                     disc_loss = discriminator_loss(real_output, fake_output, loss)
@@ -101,10 +101,10 @@ class Generator:
                 
     def generate(self, num_images) -> np.ndarray:
         """Generate synthetic data according to config.num_synthetic_shots, config.synth_ratio, and config.num_real_shots."""
-        generator = self.generator
+        generator = self.dcgan_generator()
         num_gen_imgs = self.config["num_synthetic_shots"]
         s_ratio = self.config["synth_ratio"]
         class_imbalance = self.config["ci_ratio"]
         seed = tf.random.normal([num_images, 100])
-        generated_images = generator(seed)
+        generated_images = generator(seed, training=False)
         return generated_images
