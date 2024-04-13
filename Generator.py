@@ -69,13 +69,12 @@ class Generator:
         generator_optimizer = tf.keras.optimizers.Adam(1e-4)
         discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
 
-        EPOCHS = 5
+        EPOCHS = 10
         noise_dim = 100
         N = len(x)
 
         for epoch in range(EPOCHS):
             noise = tf.random.normal([N, noise_dim])
-            print(epoch)
 
             with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
                 generated_images = self.generator(noise, training=True)

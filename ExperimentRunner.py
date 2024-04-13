@@ -11,11 +11,13 @@ class ExperimentRunner:
     config: ExperimentConfig
     name: str
     dl: DataLoader
+    EPOCHS: int
 
-    def __init__(self, config: ExperimentConfig, dl: DataLoader):
+    def __init__(self, config: ExperimentConfig, dl: DataLoader, EPOCHS: int = 10):
         self.config = config
         self.name = config.name
         self.dl = dl
+        self.EPOCHS = EPOCHS
 
     def run(self) -> Results:
         x_train, y_train, x_test, y_test = self.dl.load_data()
@@ -36,6 +38,6 @@ class ExperimentRunner:
         generated_x = np.concatenate((generated_neg, generated_pos))
         generated_y = np.concatenate((np.zeros(num_neg_imgs), np.ones(num_pos_imgs)))
 
-        classifier = Classifier(self.config)
+        classifier = Classifier(self.config, self.EPOCHS)
         classifier.train(x_train, y_train, generated_x, generated_y)
         return classifier.evaluate(x_test, y_test)

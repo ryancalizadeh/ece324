@@ -9,6 +9,7 @@ class ConfigGenerator:
                 for k, sr_ratio in enumerate(ConfigGenerator.sr_ratio_range()):
                     ConfigGenerator.save_config(ci_ratio, num_real_shots, sr_ratio, file_dir, i, j, k)
 
+    @staticmethod
     def save_config(ci_ratio, num_real_shots, sr_ratio, file_dir, ci_ratio_index, num_real_shots_index, sr_ratio_index):
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
@@ -38,7 +39,7 @@ class ConfigGenerator:
 
     @staticmethod
     def ci_ratio_range():
-        return [x/10 for x in range(0, 11, 2)]
+        return [x/10 for x in range(2, 11, 2)]
 
     @staticmethod
     def num_real_shots_range():
@@ -46,4 +47,4 @@ class ConfigGenerator:
 
     @staticmethod
     def sr_ratio_range():
-        return [x/10 for x in range(0, 11, 2)]
+        return [x/10 for x in range(2, 11, 2)]
