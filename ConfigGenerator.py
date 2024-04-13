@@ -4,6 +4,10 @@ import json
 class ConfigGenerator:
     @classmethod
     def generate_config_files(cls, file_dir: str = "configs/"):
+        # Clear the directory
+        for f in os.listdir(file_dir):
+            os.remove(os.path.join(file_dir, f))
+
         for i, ci_ratio in enumerate(ConfigGenerator.ci_ratio_range()):
             for j, num_real_shots in enumerate(ConfigGenerator.num_real_shots_range()):
                 for k, sr_ratio in enumerate(ConfigGenerator.sr_ratio_range()):
