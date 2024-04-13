@@ -34,10 +34,13 @@ The main entrypoint to this code is `experiment.ipynb`, walking through that not
 1. First the `ConfigGenerator` class is used to generate a set of config files. For our research, we specify configs to cover a grid of ci ratios, NRS's, and sr ratios.
 2. The config files are iterated over and loaded as an ExperimentConfig object. The DataLoader object uses the config to specify how to set up the limited dataset from the base MedMNIST dataset.
 3. The ExperimentRunner class sets up the experiment for each config file and limited dataset by doing the following steps
-- determines how many synthetic images need to be generated
-- trains the DCGAN on the limited dataset
-- generates the required number of synthetic images
-- combines the synthetic images with the limited dataset to form the augmented dataset
-- trains the classifier on the augmented dataset
-- returns the training history of the classifier and the classifier accuracy
+    - determines how many synthetic images need to be generated
+    - trains the DCGAN on the limited dataset
+    - generates the required number of synthetic images
+    - combines the synthetic images with the limited dataset to form the augmented dataset
+    - trains the classifier on the augmented dataset
+    - returns the training history of the classifier and the classifier accuracy
 4. The history data is visualized using MatPlotLib
+
+**IMPORTANT**
+Running the training code could take a while (~1 hour)
