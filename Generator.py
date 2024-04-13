@@ -69,29 +69,28 @@ class Generator:
         generator_optimizer = tf.keras.optimizers.Adam(1e-4)
         discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
 
-        EPOCHS = 50
+        EPOCHS = 5
         noise_dim = 100
-        dataset = tf.data.Dataset.from_tensor_slices(x)
         N = len(x)
 
         for epoch in range(EPOCHS):
-            for image_batch in dataset:
-                noise = tf.random.normal([N, noise_dim])
+            noise = tf.random.normal([N, noise_dim])
+            print(epoch)
 
-                with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-                    generated_images = self.generator(noise, training=True)
-                    
-                    real_output = self.discriminator(image_batch, training=True)
-                    fake_output = self.discriminator(generated_images, training=True)
-                    
-                    gen_loss = self.generator_loss(fake_output, loss)
-                    disc_loss = self.discriminator_loss(real_output, fake_output, loss)
+            with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
+                generated_images = self.generator(noise, training=True)
 
-                gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
-                gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
-            
-                generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
-                discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
+                real_output = self.discriminator(x, training=True)
+                fake_output = self.discriminator(generated_images, training=True)
+
+                gen_loss = self.generator_loss(fake_output, loss)
+                disc_loss = self.discriminator_loss(real_output, fake_output, loss)
+
+            gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
+            gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
+        
+            generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
+            discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
 
     def generate(self, num_images) -> np.ndarray:
         """Generate synthetic data according to config.num_synthetic_shots, config.synth_ratio, and config.num_real_shots."""

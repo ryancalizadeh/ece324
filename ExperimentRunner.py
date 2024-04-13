@@ -33,7 +33,7 @@ class ExperimentRunner:
         generator_pos.train(x_train[y_train == 1])
         generated_pos = generator_pos.generate(num_pos_imgs)
 
-        generated_x = np.concatenate(generated_neg, generated_pos)
+        generated_x = np.concatenate((generated_neg, generated_pos))
         generated_y = np.concatenate((np.zeros(num_neg_imgs), np.ones(num_pos_imgs)))
 
         classifier = Classifier(self.config)

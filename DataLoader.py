@@ -3,6 +3,8 @@ import numpy as np
 
 from medmnist import PneumoniaMNIST
 from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
+
 
 class DataLoader:
     x: np.ndarray
@@ -57,9 +59,7 @@ class DataLoader:
         y_train = np.concatenate((np.ones(num_pos), np.zeros(num_neg)))
 
         # Shuffle the data
-        p = np.random.permutation(len(x_train))
-        x_train = x_train[p]
-        y_train = y_train[p]
+        shuffle(x_train, y_train)
 
         # Optimization so we aren't testing on a massive dataset
         _, x_test, _, y_test = train_test_split(self.x, self.y, test_size=1000)
